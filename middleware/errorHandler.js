@@ -12,6 +12,7 @@ const errorHandler = (err, req, res, next) => {
     if (ValidationError) {
         statusCode = 422;
         data = {
+            statusCode: statusCode,
             message: err.message
         }
     }else if (CoustomErrorHandler) {

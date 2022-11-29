@@ -12,5 +12,9 @@ class CoustomErrorHandler extends Error {
     static wrongCradentials(message= "usernamee or password not found!") {
         return new CoustomErrorHandler(401, message)
     }
+
+    static unAuthorized(message= "user unAuthorized") {
+        return new CoustomErrorHandler(401, message)
+    }
 }
 export default CoustomErrorHandler

@@ -3,29 +3,29 @@ import User from "../model/userModel.js";
 import bcrypt from 'bcrypt'
 import CoustomErrorHandler from "../service/CoustomErrorHandler.js";
 import JwtService from "../service/jwtService.js";
+import {REFRESH_SECRET} from "../config/index.js";
+import RefreshToken from "../model/refreshToken.js";
 
 
 const registerController = {
     async register(req, res, next) {
-            const querySchema = Joi.object({
-                name: Joi.string().min(3).required(),
-                email: Joi.string().email().required(),
-                password: Joi.string().required().pattern(new RegExp('^[a-zA_Z0-9]{3-30}$')),
-                repeat_password: Joi.ref('password')
-            })
-           const {error} = querySchema.validate(req.body);
-           if(error){
-           return next(error)
-           }
+        const querySchema = Joi.object({
+            name: Joi.string().min(3).required(),
+            email: Joi.string().email().required(),
+            password: Joi.string().required(),
+            repeat_password: Joi.ref('password')
+        })
+        const {error} = querySchema.validate(req.body);
+        if (error) {
+            return next(error)
+        }
 
 
         // check email is already in use or not
-        console.log("email id id is ", req.body.email);
         try {
             const exist = await User.exists({email: req.body.email})
-            console.log(exist);
             if (exist) {
-                
+
                 return next(CoustomErrorHandler.alreadyExist("this email id is already exist"))
             }
         } catch (err) {
@@ -43,16 +43,24 @@ const registerController = {
             password: hashPassword
         })
         let access_token;
+        let refresh_token;
         try {
             const result = await user.save()
             //genrate token
-            access_token= JwtService.sign({_id: result._id, role: result.role})
+            access_token = JwtService.sign({_id: result._id, role: result.role})
+            refresh_token = JwtService.sign({_id: result._id, role: result.role}, '1y', REFRESH_SECRET)
+
+            await RefreshToken.create({
+                token: refresh_token
+            })
+
         } catch (err) {
             next(err)
         }
 
         res.json({
-            access_token
+            access_token,
+            refresh_token
         })
     }
 }
