@@ -18,7 +18,7 @@ const registerController = {
         }
         // validateFunction(req.body)
 
-        // check email is already in use or not
+
         try {
             const exist = await User.exists({email: req.body.email})
             if (exist) {
