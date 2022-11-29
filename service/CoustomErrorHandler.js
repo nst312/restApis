@@ -6,11 +6,11 @@ class CoustomErrorHandler extends Error {
     }
 
     static alreadyExist(message) {
-        return new CoustomErrorHandler(409, message)
+        return new CoustomErrorHandler( 409,message)
     }
 
     static wrongCradentials(message= "usernamee or password not found!") {
-        return new CoustomErrorHandler(409, message)
+        return new CoustomErrorHandler(401, message)
     }
 }
 export default CoustomErrorHandler

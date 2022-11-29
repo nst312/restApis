@@ -1,34 +1,34 @@
 import * as Joi from "joi"
-import User from "../model/userModel"
-import CoustomErrorHandler from "../service/CoustomErrorHandler"
+import User from "../model/userModel.js"
+import CoustomErrorHandler from "../service/CoustomErrorHandler.js"
 import bcrypt from 'bcrypt'
+import JwtService from '../service/jwtService.js'
 
 const loginController ={
     async login(req, res ,next){
-        const loginSchema = joi.object({
-            email : Joi.string().email().required(),
-            password: Joi.string().required()
-        })
+        // const loginSchema = joi.object({
+        //     email : Joi.string().email().required(),
+        //     password: Joi.string().required()
+        // })
 
-        const {error} = loginSchema.validate(req.body)
+        // const {error} = loginSchema.validate(req.body)
 
-        if (error) {
-            return next(error)
-        }
+        // if (error) {
+        //     return next(error)
+        // }
         try{
-            const user = User.findOne({
+            const user = await User.findOne({
                 email: req.body.email
             })
-            if(!user){
-                return next(CoustomErrorHandler.wrongCradentials())
+            if(!user === true){
+                return next(CoustomErrorHandler.alreadyExist("email id dose not already exist"))
             }
-
             const match = await bcrypt.compare(req.body.password, user.password)
             if(!match){
                 return next(CoustomErrorHandler.wrongCradentials())
             }
-            const token =  access_token= JwtService.sign({_id: user._id, role: user.role})
-            res.json({token})
+            const jwt_token =   JwtService.sign({_id: user._id, role: user.role})
+            res.json({jwt_token})
         }catch(err){
             return next(err)
         }

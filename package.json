@@ -1,8 +1,8 @@
 {
   "name": "restapis",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
+  "type": "module",
   "dependencies": {
     "abbrev": "^1.1.1",
     "accepts": "^1.3.8",
@@ -177,10 +177,18 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
-  "type": "module"
-
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nst312/restApis.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nst312/restApis/issues"
+  },
+  "homepage": "https://github.com/nst312/restApis#readme",
+  "description": ""
 }

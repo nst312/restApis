@@ -1,8 +1,8 @@
 import Joi from "joi";
-import User from "../model/userModel";
+import User from "../model/userModel.js";
 import bcrypt from 'bcrypt'
-import CoustomErrorHandler from "../service/CoustomErrorHandler";
-import JwtService from "../service/jwtService";
+import CoustomErrorHandler from "../service/CoustomErrorHandler.js";
+import JwtService from "../service/jwtService.js";
 
 
 const registerController = {
@@ -19,9 +19,12 @@ const registerController = {
         // validateFunction(req.body)
 
         // check email is already in use or not
+        // console.log("email id id is ", req.body.email);
         try {
             const exist = await User.exists({email: req.body.email})
+            console.log(exist);
             if (exist) {
+                
                 return next(CoustomErrorHandler.alreadyExist("this email id is already exist"))
             }
         } catch (err) {
