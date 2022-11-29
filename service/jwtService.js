@@ -1,4 +1,4 @@
-import {JWT_SECRET} from '../config'
+import {JWT_SECRET} from '../config/index.js'
 import jwt from 'jsonwebtoken'
 
 class JwtService {
