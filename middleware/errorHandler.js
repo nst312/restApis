@@ -3,21 +3,18 @@ import ValidationError from 'joi'
 import CoustomErrorHandler from "../service/CoustomErrorHandler.js";
 
 const errorHandler = (err, req, res, next) => {
-    let statusCode = 500;
+    let statusCode =500;
     let data = {
+        statusCode: statusCode,
         message: 'internal server error ',
         ...(DEBUG_MODE === 'true' && {originalError: err.message})
     }
-    if ( ValidationError) {
-
+    if (ValidationError) {
         statusCode = 422;
         data = {
             message: err.message
         }
-
-    
-    }
-    if (CoustomErrorHandler) {
+    }else if (CoustomErrorHandler) {
 
         statusCode = err.status;
         data = {

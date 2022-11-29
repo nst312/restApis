@@ -7,19 +7,20 @@ import JwtService from "../service/jwtService.js";
 
 const registerController = {
     async register(req, res, next) {
-        const validateFunction = async (data) => {
             const querySchema = Joi.object({
                 name: Joi.string().min(3).required(),
                 email: Joi.string().email().required(),
                 password: Joi.string().required().pattern(new RegExp('^[a-zA_Z0-9]{3-30}$')),
                 repeat_password: Joi.ref('password')
             })
-            await Joi.validate(data, querySchema);
-        }
-        // validateFunction(req.body)
+           const {error} = querySchema.validate(req.body);
+           if(error){
+           return next(error)
+           }
+
 
         // check email is already in use or not
-        // console.log("email id id is ", req.body.email);
+        console.log("email id id is ", req.body.email);
         try {
             const exist = await User.exists({email: req.body.email})
             console.log(exist);

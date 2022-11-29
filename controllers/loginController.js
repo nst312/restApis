@@ -1,4 +1,4 @@
-import * as Joi from "joi"
+import Joi from "joi"
 import User from "../model/userModel.js"
 import CoustomErrorHandler from "../service/CoustomErrorHandler.js"
 import bcrypt from 'bcrypt'
@@ -6,16 +6,16 @@ import JwtService from '../service/jwtService.js'
 
 const loginController ={
     async login(req, res ,next){
-        // const loginSchema = joi.object({
-        //     email : Joi.string().email().required(),
-        //     password: Joi.string().required()
-        // })
+        const loginSchema = Joi.object({
+            email : Joi.string().email().required(),
+            password: Joi.string().required()
+        })
 
-        // const {error} = loginSchema.validate(req.body)
+        const {error} = loginSchema.validate(req.body)
 
-        // if (error) {
-        //     return next(error)
-        // }
+        if (error) {
+            return next(error)
+        }
         try{
             const user = await User.findOne({
                 email: req.body.email
