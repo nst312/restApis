@@ -4,6 +4,7 @@ import loginController from "../controllers/loginController.js";
 import userController from "../controllers/userController.js";
 import auth from "../middleware/auth.js";
 import tokenController from "../controllers/tokenController.js";
+import productController from "../controllers/productController.js";
 
 const router = express.Router()
 
@@ -12,6 +13,8 @@ router.post('/login', loginController.login)
 router.post('/logout',auth, loginController.logout)
 router.get('/me', auth, userController.me)
 router.post('/refreshToken',tokenController.refreshToken)
+
+router.post('/products',productController.store)
 
 
 export default router
