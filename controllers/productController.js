@@ -32,7 +32,7 @@ const productController = {
             const {error} = productShema.validate(req.body)
             if (error) {
                 fs.unlink(`${appRoot}/${filePath}`, (err) => {
-                    if (err){
+                    if (err) {
                         return next(CoustomErrorHandler.serverError())
                     }
 
@@ -52,6 +52,73 @@ const productController = {
             }
             res.status(201).json(document)
         })
+    },
+
+    update(req, res, next) {
+        imageMulter(req, res, async (err) => {
+            if (err) {
+                return next(CoustomErrorHandler.serverError(err.message))
+            }
+            let filePath;
+            if (req.file) {
+                filePath = req.file.path
+            }
+            const appRoot = path.resolve()
+
+            //validation
+            const productShema = Joi.object({
+                name: Joi.string().required(),
+                price: Joi.string().required(),
+                size: Joi.string().required(),
+                image: Joi.string()
+            })
+            const {error} = productShema.validate(req.body)
+            if (error) {
+                if (req.file) {
+                    fs.unlink(`${appRoot}/${filePath}`, (err) => {
+                        if (err) {
+                            return next(CoustomErrorHandler.serverError())
+                        }
+                    })
+                }
+                return next(error)
+            }
+            let document
+            const {name, price, size} = req.body
+            try {
+                document = await Product.findOneAndUpdate({
+                    _id: req.params.id
+                },{
+                    name, price, size,
+                    ...(req.file && {image: filePath})
+                },{
+                    new: true
+                })
+            } catch (err) {
+                console.log("here is comming")
+                return next(err)
+            }
+            res.status(201).json(document)
+        })
+
+    },
+
+    async delete(req, rse, next){
+        const document = await Product.findOneAndRemove({_id:req.params.id})
+        if (!document){
+            return next(new Error("nothing to delete"))
+        }
+        const imagePath = document.image
+        const appRoot = path.resolve()
+
+        fs.unlink(`${appRoot}/${imagePath}`,(e)=>{
+            if (e){
+                return next(CoustomErrorHandler.serverError())
+            }
+        })
+        rse.json(document)
     }
+
+
 }
 export default productController
