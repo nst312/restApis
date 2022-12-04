@@ -12,7 +12,9 @@ const storage = multer.diskStorage({
         cb(null, uniqueName)
     }
 })
+
 const imageMulter = multer({storage, limits: {fileSize: 1000000 * 10}}).single('image')
+
 const productController = {
     async store(req, res, next) {
         imageMulter(req, res, async (err) => {
@@ -88,10 +90,10 @@ const productController = {
             try {
                 document = await Product.findOneAndUpdate({
                     _id: req.params.id
-                },{
+                }, {
                     name, price, size,
                     ...(req.file && {image: filePath})
-                },{
+                }, {
                     new: true
                 })
             } catch (err) {
@@ -103,22 +105,44 @@ const productController = {
 
     },
 
-    async delete(req, rse, next){
-        const document = await Product.findOneAndRemove({_id:req.params.id})
-        if (!document){
+    async delete(req, rse, next) {
+        const document = await Product.findOneAndRemove({_id: req.params.id})
+        if (!document) {
             return next(new Error("nothing to delete"))
         }
-        const imagePath = document.image
+        //_doc mens we use getter at time of image show ( check get function in products.js)
+        // to remove URL and get simple path there is _doc
+        const imagePath = document._doc.image
         const appRoot = path.resolve()
 
-        fs.unlink(`${appRoot}/${imagePath}`,(e)=>{
-            if (e){
+        fs.unlink(`${appRoot}/${imagePath}`, (e) => {
+            if (e) {
                 return next(CoustomErrorHandler.serverError())
             }
         })
         rse.json(document)
-    }
+    },
 
+    async index(req, res, next) {
+        let documents;
+        try {
+            documents = await Product.find().select('-updatedAt -__v -createdAt').sort({createdAt: -1})
+        } catch (e) {
+            return (CoustomErrorHandler.serverError())
+        }
+
+        res.send(documents)
+    },
+
+    async show(req, res, next) {
+        let document;
+        try {
+            document = await Product.findOne({_id: req.params.id}).select('-createdAt -updatedAt -__v ')
+        } catch (e) {
+            return next(CoustomErrorHandler.serverError())
+        }
+        return res.json(document)
+    }
 
 }
 export default productController

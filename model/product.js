@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {APP_URL} from "../config/index.js";
 const Schema= mongoose.Schema
 
 const productSchema = new Schema({
@@ -16,9 +17,12 @@ const productSchema = new Schema({
     },
     image: {
         type: String,
-        required: true
+        required: true,
+        get: (image)=>{
+            return `${APP_URL}/${image}`
+        }
     }
-},{ timestamps: true})
+},{ timestamps: true, toJSON: {getters: true}, id: false})
 
 const Product = new mongoose.model("products", productSchema)
 export default Product

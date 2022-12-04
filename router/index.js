@@ -16,8 +16,11 @@ router.get('/me', auth, userController.me)
 router.post('/refreshToken', tokenController.refreshToken)
 
 router.post('/products', [auth, admin], productController.store)
-router.post('/products/:id', productController.update)
-router.delete('/products/:id', productController.delete)
+router.post('/products/:id', [auth, admin], productController.update)
+router.delete('/products/:id', [auth, admin], productController.delete)
+router.get('/products', [auth, admin], productController.index)
+router.get('/uploads', express.static('uploads'))
+router.get('/products/:id', [auth, admin], productController.show)
 
 
 export default router
