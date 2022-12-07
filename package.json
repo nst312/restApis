@@ -190,5 +190,6 @@
     "url": "https://github.com/nst312/restApis/issues"
   },
   "homepage": "https://github.com/nst312/restApis#readme",
+  "devDependencies": {},
   "description": ""
 }

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import {APP_URL} from "../config/index.js";
-const Schema= mongoose.Schema
+
+const Schema = mongoose.Schema
 
 const productSchema = new Schema({
     name: {
@@ -8,21 +9,25 @@ const productSchema = new Schema({
         required: true
     },
     price: {
-        type: String,
+        type: Number,
         required: true
     },
     size: {
         type: String,
         required: true
     },
+    categoriId: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
     image: {
         type: String,
         required: true,
-        get: (image)=>{
+        get: (image) => {
             return `${APP_URL}/${image}`
         }
     }
-},{ timestamps: true, toJSON: {getters: true}, id: false})
+}, {timestamps: true, toJSON: {getters: true}, id: false})
 
 const Product = new mongoose.model("products", productSchema)
 export default Product

@@ -23,12 +23,12 @@ const productController = {
             }
             const filePath = req.file.path
             const appRoot = path.resolve()
-            console.log(appRoot)
 
             //validation
             const productShema = Joi.object({
                 name: Joi.string().required(),
-                price: Joi.string().required(),
+                price: Joi.number().required(),
+                categoriId: Joi.string().required(),
                 size: Joi.string().required()
             })
             const {error} = productShema.validate(req.body)
